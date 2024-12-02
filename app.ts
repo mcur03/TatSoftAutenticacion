@@ -1,19 +1,19 @@
-import express from "express";
+import express from 'express';
 import bodyParser from 'body-parser';
+import dotenv from 'dotenv';
+import cors from 'cors';
+import authRoutes from './src/routes/auth';
 
-import auth from './routes/login';
-
-import dotenv from "dotenv";
 dotenv.config();
 
-const app = express().use(bodyParser.json());
+const app = express();
+const PORT = process.env.PORT || 3000;
 
-app.use('/auth', auth);
+app.use(cors());
+app.use(bodyParser.json());
 
-const PORT = process.env.PORT || 10101;
+app.use('/api/auth', authRoutes);
 
 app.listen(PORT, () => {
-  console.log("Servidor ejecutándose en el puerto: ", PORT);
-}).on("error", (error) => {
-  throw new Error(error.message);
+  console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
