@@ -2,8 +2,11 @@ import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import axios from 'axios';
 import bcrypt from 'bcrypt';
+import dotenv from 'dotenv';
 
-const USER_SERVICE_URL = process.env.USER_SERVICE_URL || 'http://localhost:10101/api/usuarios'; // URL del microservicio
+dotenv.config();
+
+const USER_SERVICE_URL = process.env.USER_SERVICE_URL; // URL del microservicio
 
 export const login = async (req: Request, res: Response) => {
   const { cedula, password } = req.body;
@@ -12,10 +15,10 @@ export const login = async (req: Request, res: Response) => {
     // Consulta al microservicio
     const response = await axios.get(`${USER_SERVICE_URL}/cedula/${cedula}`);
     const user = response.data;
-
+    
+    console.log(user, 'CONTRASEÑA',user.contraseña, 'ROLE',user.rol);
     // Verifica si el usuario fue encontrado
     if (!user || !user.contraseña || !user.rol) {
-        console.log(user, 'CONTRASEÑA',user.contraseña, 'ROL',user.rol);
         
       return res.status(404).json({ message: 'Usuario no encontrado o datos incompletos' });
     }
@@ -25,14 +28,18 @@ export const login = async (req: Request, res: Response) => {
     if (!validPassword) {
       return res.status(401).json({ message: 'Contraseña incorrecta' });
     }
-
+    console.log("UUUUUUUUUUUUUUUUUUU", typeof(user.id));
+    
     // Genera el token
     const token = jwt.sign(
-      { id: user.id, cedula: user.cedula, role: user.rol },  // Usar 'rol' en lugar de 'role'
-      process.env.JWT_SECRET || 'secret',
+      { contraseña: user.contraseña, cedula: user.cedula, role: user.rol }, 
+      process.env.JWT_SECRET|| '0a0b0d0f0g0h0i0j0k0l0m0n0',
       { expiresIn: '1h' }
     );
 
+    console.log('token login',token);
+    
+    
     // Responde con el token
     res.json({ token });
   } catch (error) {
