@@ -29,11 +29,13 @@ export const login = async (req: Request, res: Response) => {
       return res.status(401).json({ message: 'Contraseña incorrecta' });
     }
     console.log("UUUUUUUUUUUUUUUUUUU", typeof(user.id));
-    
+    if (!process.env.JWT_SECRET) {
+      throw new Error('JWT_SECRET is not defined in environment variables');
+  }
     // Genera el token
     const token = jwt.sign(
       { contraseña: user.contraseña, cedula: user.cedula, role: user.rol }, 
-      process.env.JWT_SECRET|| '0a0b0d0f0g0h0i0j0k0l0m0n0',
+      process.env.JWT_SECRET ?? ' ',
       { expiresIn: '1h' }
     );
 
