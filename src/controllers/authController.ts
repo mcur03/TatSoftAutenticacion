@@ -16,7 +16,7 @@ export const login = async (req: Request, res: Response) => {
     const response = await axios.get(`${USER_SERVICE_URL}/cedula/${cedula}`);
     const user = response.data;
     
-    console.log(user, 'CONTRASEÑA',user.contraseña, 'ROLE',user.rol);
+    console.log(user, 'CONTRASEÑA',user.contraseña, 'ROLE',user.rol, 'ID', user.id_usuario );
     // Verifica si el usuario fue encontrado
     if (!user || !user.contraseña || !user.rol) {
         
@@ -28,13 +28,12 @@ export const login = async (req: Request, res: Response) => {
     if (!validPassword) {
       return res.status(401).json({ message: 'Contraseña incorrecta' });
     }
-    console.log("UUUUUUUUUUUUUUUUUUU", typeof(user.id));
     if (!process.env.JWT_SECRET) {
       throw new Error('JWT_SECRET is not defined in environment variables');
   }
     // Genera el token
     const token = jwt.sign(
-      { contraseña: user.contraseña, cedula: user.cedula, role: user.rol }, 
+      { contraseña: user.contraseña, cedula: user.cedula, role: user.rol, id_usuario: user.id_usuario }, 
       process.env.JWT_SECRET ?? ' ',
       { expiresIn: '1h' }
     );
