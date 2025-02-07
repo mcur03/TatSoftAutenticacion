@@ -1,0 +1,59 @@
+openapi: 3.0.0
+info:
+  title: API de Autenticación y Restablecimiento de Contraseña
+  description: Documentación de la API con Swagger
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+    description: Servidor del microservicio autenticación
+paths:
+  /api/auth/login:
+    post:
+      tags:
+        - Login
+      summary: Iniciar sesión
+      description: Para ingresar al sistema
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                cedula:
+                  type: string
+                  description: Credenciales.
+                  example: 1097731655
+                password:
+                  type: string
+                  description: Credenciales.
+                  example: contraseña123
+      responses:
+        "200":
+          description: Inicio de sesión exitoso
+        "401":
+          description: Credenciales incorrectas
+        "404":
+        description: El usuario no existe
+  /api/reset/request-reset-code:
+    post:
+      tags:
+        - Restaurar contraseña
+      summary: Solicitar código de restablecimiento de contraseña
+      description: Ingresa el email para enviar el codigo de verificación.
+      requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  email:
+                    type: string
+                    description: Correo electronico registrado en el sistema.
+                    example: "mcur99.03@gmail.com"
+      responses:
+        "200":
+          description: Código enviado
+        "404":
+          description: Usuario no encontrado

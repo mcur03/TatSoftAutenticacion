@@ -8,6 +8,6 @@ router.post('/request-reset-code', (req, res, next) => {
     requestResetCode(req, res).catch(next);
   });
   router.post('/validate-reset-code',  validateRequest, validateResetCode);
-router.post('/reset-password', resetPassword);
+router.post('/reset-password', validateRequest, resetPassword);
 
 export default router;

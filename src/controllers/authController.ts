@@ -41,15 +41,15 @@ export const login = async (req: Request, res: Response) => {
     console.log('token login',token);
     
     
-    // Responde con el token
     res.json({ token });
   } catch (error) {
-    // Maneja errores específicos de axios
     if (axios.isAxiosError(error)) {
+      if (error.response?.status === 404) {
+        return res.status(404).json({ message: 'El usuario no existe' });
+      }
       return res.status(error.response?.status || 500).json({ message: 'Error en el microservicio de usuarios' });
     }
 
-    // Manejo genérico de errores
     console.error(error);
     return res.status(500).json({ message: 'Error en el servidor' });
   }

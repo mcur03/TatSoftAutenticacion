@@ -47,10 +47,15 @@ export const requestResetCode = async (req: Request, res: Response) => {
         console.log('codigo enviado');
         
 
-        res.status(200).json({ message: 'Código enviado al correo' });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Error al procesar la solicitud' });
+        res.status(200).json({ message: 'Código enviado' });
+    } catch (error:any) {
+        if (error.response?.status === 404) {
+            return res.status(404).json({ message: 'Usuario no encontrado' });
+          }
+          return res.status(error.response?.status || 500).json({ message: 'Error en el microservicio de usuarios' });
+
+        // console.error(error);
+        // res.status(500).json({ message: 'Error al procesar la solicitud' });
     }
 };
 
@@ -97,9 +102,13 @@ export const resetPassword = async (req: Request, res: Response) => {
         });
 
         res.status(200).json({ message: 'Contraseña actualizada con éxito' });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Error al actualizar la contraseña' });
+    } catch (error:any) {
+        if (error.response?.status === 404) {
+            res.status(404).json({ message: 'Usuario no encontrado' });
+          }
+          res.status(error.response?.status || 500).json({ message: 'Error en el microservicio de usuarios' });
+        // console.error(error);
+        // res.status(500).json({ message: 'Error al actualizar la contraseña' });
     }
 };
 
