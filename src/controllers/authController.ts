@@ -20,13 +20,13 @@ export const login = async (req: Request, res: Response) => {
     // Verifica si el usuario fue encontrado
     if (!user || !user.contraseña || !user.rol) {
         
-      return res.status(404).json({ message: 'Usuario no encontrado o datos incompletos' });
+      return res.status(404).json({ error: 'Usuario no encontrado o datos incompletos' });
     }
 
     // Verifica la contraseña
     const validPassword = await bcrypt.compare(password, user.contraseña);
     if (!validPassword) {
-      return res.status(401).json({ message: 'Contraseña incorrecta' });
+      return res.status(401).json({ error: 'Contraseña incorrecta' });
     }
     if (!process.env.JWT_SECRET) {
       throw new Error('JWT_SECRET is not defined in environment variables');
@@ -41,16 +41,16 @@ export const login = async (req: Request, res: Response) => {
     console.log('token login',token);
     
     
-    // Responde con el token
     res.json({ token });
   } catch (error) {
-    // Maneja errores específicos de axios
     if (axios.isAxiosError(error)) {
-      return res.status(error.response?.status || 500).json({ message: 'Error en el microservicio de usuarios' });
+      if (error.response?.status === 404) {
+        return res.status(404).json({ error: 'El usuario no existe' });
+      }
+      return res.status(error.response?.status || 500).json({ error: 'Error en el microservicio de usuarios' });
     }
 
-    // Manejo genérico de errores
     console.error(error);
-    return res.status(500).json({ message: 'Error en el servidor' });
+    return res.status(500).json({ error: 'Error en el servidor' });
   }
 };

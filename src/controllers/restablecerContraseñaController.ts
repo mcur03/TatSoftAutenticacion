@@ -17,7 +17,7 @@ export const requestResetCode = async (req: Request, res: Response) => {
         console.log('entro a la url de usuarios');
         
         if (!response.data) {
-            return res.status(404).json({ message: 'Usuario no encontrado' });
+            return res.status(404).json({ error: 'Usuario no encontrado' });
         }
 
         // Generar un código de 4 dígitos
@@ -39,7 +39,7 @@ export const requestResetCode = async (req: Request, res: Response) => {
         } catch (redisError) {
             const error = redisError as Error;
             console.error('Error al conectar con Redis:', error.message);
-            return res.status(500).json({ message: 'Error interno del servidor (Redis)' });
+            return res.status(500).json({ error: 'Error interno del servidor (Redis)' });
         }
 
         // Enviar el correo directamente desde Node.js
@@ -47,10 +47,15 @@ export const requestResetCode = async (req: Request, res: Response) => {
         console.log('codigo enviado');
         
 
-        res.status(200).json({ message: 'Código enviado al correo' });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Error al procesar la solicitud' });
+        res.status(200).json({ message: 'Código enviado' });
+    } catch (error:any) {
+        if (error.response?.status === 404) {
+            return res.status(404).json({ error: 'Usuario no encontrado' });
+          }
+          return res.status(error.response?.status || 500).json({ error: 'Error en el microservicio de usuarios' });
+
+        // console.error(error);
+        // res.status(500).json({ message: 'Error al procesar la solicitud' });
     }
 };
 
@@ -64,12 +69,12 @@ export const validateResetCode = async (req: Request, res: Response): Promise<vo
         const storedCode = await redis.get(`verificationCode:${email}`);
 
         if (!storedCode) {
-            res.status(400).json({ message: 'Código expirado o no encontrado' });
+            res.status(400).json({ error: 'Código expirado o no encontrado' });
             return;
         }
 
         if (storedCode !== code) {
-            res.status(400).json({ message: 'Código incorrecto' });
+            res.status(400).json({ error: 'Código incorrecto' });
             return;
         }
 
@@ -77,7 +82,7 @@ export const validateResetCode = async (req: Request, res: Response): Promise<vo
         res.status(200).json({ message: 'Código verificado correctamente' });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Error al verificar el código' });
+        res.status(500).json({ error: 'Error interno del servidor' });
     }
 };
 
@@ -97,9 +102,13 @@ export const resetPassword = async (req: Request, res: Response) => {
         });
 
         res.status(200).json({ message: 'Contraseña actualizada con éxito' });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Error al actualizar la contraseña' });
+    } catch (error:any) {
+        if (error.response?.status === 404) {
+            res.status(404).json({ error: 'Usuario no encontrado' });
+          }
+          res.status(error.response?.status || 500).json({ error: 'Error en el microservicio de usuarios' });
+        // console.error(error);
+        // res.status(500).json({ message: 'Error al actualizar la contraseña' });
     }
 };
 

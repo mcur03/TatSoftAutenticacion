@@ -1,0 +1,253 @@
+openapi: 3.0.0
+info:
+  title: API de Autenticación y Restablecimiento de Contraseña
+  description: Documentación de la API con Swagger
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+    description: Servidor del microservicio autenticación
+paths:
+# Login
+  /api/auth/login:
+    post:
+      tags:
+        - Login
+      summary: Iniciar sesión
+      description: Para ingresar al sistema
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                cedula:
+                  type: string
+                  description: Credenciales.
+                  example: 1097731655
+                password:
+                  type: string
+                  description: Credenciales.
+                  example: contraseña123
+      responses:
+        "200":
+          description: Genera un token te autenticación.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb250cmFzZcOxYSI6"
+        "401":
+          description: Contraseña incorrecta.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Contraseña incorrecta"
+        "404":
+          description: El usuario no existe.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "El usuario no existe"
+        "500":
+          description: Error interno en el microservicio de usuarios.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Error en el microservicio de usuarios"
+
+# Solicitar código
+  /api/reset/request-reset-code:
+    post:
+      tags:
+        - Restaurar contraseña
+      summary: Solicitar código de restablecimiento de contraseña
+      description: Ingresa el email para enviar el código de verificación.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: Correo electrónico registrado en el sistema.
+                  example: "mcur99.03@gmail.com"
+      responses:
+        "200":
+          description: Envia un código al correo.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Código enviado
+        "400":
+          description: Código incorrecto.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Código incorrecto"
+        "404":
+          description: El usuario no existe.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "El usuario no existe"
+        "500":
+          description: Error interno del servidor.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Error en el microservicio de usuarios"
+
+# Validar el código
+  /api/reset/validate-reset-code:
+    post:
+      tags:
+        - Restaurar contraseña
+      summary: Validar el código
+      description: Ingresa el código enviado para validarlo.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: Correo electrónico registrado en el sistema.
+                  example: "mcur99.03@gmail.com"
+                code:
+                  type: string
+                  description: Código de 4 dígitos para la verificación.
+                  example: "0000"
+      responses:
+        "200":
+          description: código verificado correctamente.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: código verificado correctamente
+        "400":
+          description: Código inválido. Puede deberse a varias razones.
+            - Código expirado o no encontrado
+            - El código debe ser numérico
+            - Código incorrecto (cuando ingresa un código que no es el 
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        msg:
+                          type: string
+                          description: Descripción del error.
+                        param:
+                          type: string
+                          description: Campo que causó el error.
+                        location:
+                          type: string
+                          description: Ubicación del campo (body).
+        "500":
+          description: Error interno del servidor.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Error interno del servidor"
+
+  /api/reset/reset-password:
+    post:
+      tags:
+        - Restaurar contraseña
+      summary: Ingresar la nueva contraseña
+      description: Ingresa la nueva contraseña.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: Correo electrónico registrado en el sistema.
+                  example: "mcur99.03@gmail.com"
+                newPassword:
+                  type: string
+                  description: Nueva contraseña.
+                  example: "contraseña123"
+      responses:
+        "200":
+          description: Contraseña actualizada con éxito.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Contraseña actualizada con éxito.
+        "404":
+          description: Usuario no encontrado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Usuario no encontrado"
+        "500":
+          description: Error interno del servidor.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Error interno del servidor"
