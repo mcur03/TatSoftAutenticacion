@@ -107,8 +107,6 @@ export const resetPassword = async (req: Request, res: Response) => {
             res.status(404).json({ error: 'Usuario no encontrado' });
           }
           res.status(error.response?.status || 500).json({ error: 'Error en el microservicio de usuarios' });
-        // console.error(error);
-        // res.status(500).json({ message: 'Error al actualizar la contraseña' });
-    }
+        }
 };
 
