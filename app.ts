@@ -6,6 +6,7 @@ import authRoutes from './src/routes/auth';
 import reset from './src/routes/restablecercontraseña';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
+import redis from './src/config/configRedis';
 
 dotenv.config();
 
@@ -25,6 +26,17 @@ app.use('/api/auth', authRoutes);
 app.use('/api/reset', reset);
 app.get("/", (req, res) => {
   res.send("Servidor funcionando correctamente 🚀");
+});
+
+app.get("/cache", async (req, res) => {
+  const data = await redis.get("mensaje");
+  res.json({ mensaje: data || "No hay datos en caché" });
+});
+
+app.post("/cache", async (req, res) => {
+  const { key, value } = req.body;
+  await redis.set(key, value);
+  res.json({ success: true });
 });
 
 app.listen(PORT, () => {
