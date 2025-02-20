@@ -3,49 +3,31 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const redis = new Redis(process.env.REDIS_URL!);
+// Configuración para Azure Redis
+const redis = new Redis({
+  host: process.env.REDIS_HOST,
+  port: parseInt(process.env.REDIS_PORT || "6380"),
+  password: process.env.REDIS_PASSWORD,
+  tls: {
+    // Azure Redis requiere TLS
+    servername: process.env.REDIS_HOST
+  }
+});
 
-// Guardar un valor en Redis
-redis.set("mensaje", "Hola desde Upstash!");
+// Manejar eventos de conexión
+redis.on("connect", () => {
+  console.log("Conectado a Azure Redis Cache");
+});
 
-// Obtener un valor de Redis
-redis.get("mensaje").then((val) => console.log("Mensaje en Redis:", val));
+redis.on("error", (error) => {
+  console.error("Error de conexión Redis:", error);
+});
+
+// Test de conexión
+redis.set("test", "Conexión exitosa a Azure Redis!", "EX", 60).then(() => {
+  console.log("Test de escritura en Redis exitoso");
+}).catch(err => {
+  console.error("Error en test de Redis:", err);
+});
 
 export default redis;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// import Redis from 'ioredis';
-// import dotenv from 'dotenv';
-
-// dotenv.config();
-
-// // Configura Redis (usa variables de entorno para host y puerto)
-// const redis = process.env.REDIS_URL 
-//     ? new Redis(process.env.REDIS_URL, {
-//         tls: { rejectUnauthorized: false } // Necesario para Redis en Azure (SSL)
-//       }) 
-//     : new Redis({
-//         host: process.env.REDIS_HOST || '127.0.0.1',
-//         port: Number(process.env.REDIS_PORT) || 6379,
-//         password: process.env.REDIS_PASSWORD,
-//         tls: process.env.REDIS_HOST ? { rejectUnauthorized: false } : undefined
-//       });
-
-// redis.on("connect", () => console.log("✅ Conectado a Redis"));
-// redis.on("error", (err) => console.error("❌ Error en Redis:", err));
-
-// export default redis;
