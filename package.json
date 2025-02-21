@@ -3,10 +3,12 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "prebuild": "rimraf dist && mkdir dist && mkdir dist\\src && mkdir dist\\src\\templates",
-    "build": "tsc && npm run copy-templates",
-    "copy-templates": "xcopy .\\src\\templates\\*.html .\\dist\\src\\templates\\ /Y",
-    "start": "node dist/src/app.js",
+    "prebuild": "rimraf dist && mkdir dist",
+    "build": "tsc",
+    "watch": "tsc -w",
+    "clean": "rimraf dist",
+    "prestart": "npm run build",
+    "start": "node dist/app.js",
     "test": "echo \"No tests yet...\""
   },
   "dependencies": {
