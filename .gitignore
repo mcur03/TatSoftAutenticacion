@@ -3,7 +3,6 @@ dist
 node_modules
 generate_key
 
-USER_SERVICE_URL=http://localhost:10101/api/usuarios
 
 
 
