@@ -7,7 +7,7 @@
     "target": "es2020",
     "lib": ["ES2020"],
     "outDir": "./dist",
-    "rootDir": "./src",
+    "rootDir": ".",
     "forceConsistentCasingInFileNames": true,
     "sourceMap": true,
     "strict": true,
@@ -16,6 +16,5 @@
     "strictNullChecks": true,
     "resolveJsonModule": true,
     "strictBindCallApply": true
-  },
-  "include": ["src/**/*"]
+  }
 }

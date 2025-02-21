@@ -18,7 +18,6 @@ app.use(bodyParser.json());
 
 // Cargar el archivo YAML
 const swaggerDocument = YAML.load("./swagger.yaml");
-console.log("Swagger cargado correctamente:", swaggerDocument);
 // Montar la documentación Swagger en la ruta `/api-docs`
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
