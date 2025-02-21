@@ -21,7 +21,7 @@
   ],
   "dependencies": {
     "@azure/communication-email": "1.0.0",
-    "@azure/functions": "3.5.1",
+    "@azure/functions": "4.0.0",
     "@types/redis": "4.0.11",
     "axios": "1.7.9",
     "bcrypt": "5.1.1",

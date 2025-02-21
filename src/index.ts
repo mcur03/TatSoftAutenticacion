@@ -1,5 +1,5 @@
-import { app } from '@azure/functions';
+import { HttpRequest, InvocationContext } from '@azure/functions';
 
-app.setup({
-    enableHttpStream: true,
-});
+export async function myFunction(req: HttpRequest, context: InvocationContext) {
+    return { body: "Hello, Azure Functions!" };
+}
