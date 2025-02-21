@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "build": "tsc & cp -r src/templates dist/src/templates",
+    "build": "tsc && copy-files-from-to",
     "watch": "tsc -w",
     "clean": "rimraf dist",
     "prestart": "npm run clean && npm run build",
@@ -37,5 +37,5 @@
     "rimraf": "5.0.0",
     "typescript": "^5.7.2"
   },
-  "main": "dist/src/{index.js,functions/*.js}"
+  "main": "dist/app.js"
 }
