@@ -1,4 +1,3 @@
-// Forzar nuevo despliegue - 22/02/2024
 import express from 'express';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
@@ -32,7 +31,7 @@ const corsOptions = {
   credentials: true
 };
 
-app.use('*', cors(corsOptions));
+app.use(cors(corsOptions));
 app.use(bodyParser.json());
 
 // Cargar el archivo YAML
