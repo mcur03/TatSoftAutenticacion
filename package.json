@@ -1,6 +1,9 @@
 {
   "name": "tatsoftautenticacion",
   "version": "1.0.0",
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "description": "",
   "scripts": {
     "prebuild": "rimraf dist && mkdir dist",
