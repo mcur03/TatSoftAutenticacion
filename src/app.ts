@@ -27,6 +27,28 @@ app.get("/", (req, res) => {
   res.send("Servidor funcionando correctamente 🚀");
 });
 
+const allowedOrigins = [
+  'http://localhost:3000',
+  'https://microservicioautenticacion-bje8eahhh2hsf5dt.eastus-01.azurewebsites.net/api/auth/login',
+  'https://microservicioautenticacion-bje8eahhh2hsf5dt.eastus-01.azurewebsites.net/api/reset/request-reset-code',
+  'https://microservicioautenticacion-bje8eahhh2hsf5dt.eastus-01.azurewebsites.net/api/reset/validate-reset-code',
+  'https://microservicioautenticacion-bje8eahhh2hsf5dt.eastus-01.azurewebsites.net/api/reset/reset-password',
+  'https://microservicioautenticacion-bje8eahhh2hsf5dt.eastus-01.azurewebsites.net/api-docs'
+];
+
+const corsOptions = {
+  origin: function (origin: any, callback: any) {
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('No permitido por CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'Accept'],
+  credentials: true
+};
+
 app.get("/cache", async (req, res) => {
   const data = await redis.get("mensaje");
   res.json({ mensaje: data || "No hay datos en caché" });

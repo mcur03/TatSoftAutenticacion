@@ -3,6 +3,8 @@ info:
   title: API de Autenticación y Restablecimiento de Contraseña
   description: Documentación de la API con Swagger
   version: 1.0.0
+security:
+  - cors: []
 servers:
   - url: http://localhost:8080
     description: Servidor del microservicio autenticación
