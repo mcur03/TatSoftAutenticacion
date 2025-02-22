@@ -13,27 +13,10 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 8080;
 
-app.use(cors());
-app.use(bodyParser.json());
-
-// Cargar el archivo YAML
-const swaggerDocument = YAML.load("./swagger.yaml");
-// Montar la documentación Swagger en la ruta `/api-docs`
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-
-app.use('/api/auth', authRoutes);
-app.use('/api/reset', reset);
-app.get("/", (req, res) => {
-  res.send("Servidor funcionando correctamente 🚀");
-});
-
 const allowedOrigins = [
   'http://localhost:3000',
-  'https://microservicioautenticacion-bje8eahhh2hsf5dt.eastus-01.azurewebsites.net/api/auth/login',
-  'https://microservicioautenticacion-bje8eahhh2hsf5dt.eastus-01.azurewebsites.net/api/reset/request-reset-code',
-  'https://microservicioautenticacion-bje8eahhh2hsf5dt.eastus-01.azurewebsites.net/api/reset/validate-reset-code',
-  'https://microservicioautenticacion-bje8eahhh2hsf5dt.eastus-01.azurewebsites.net/api/reset/reset-password',
-  'https://microservicioautenticacion-bje8eahhh2hsf5dt.eastus-01.azurewebsites.net/api-docs'
+  'http://localhost:8080',
+  'https://microservicioautenticacion-bje8eahhh2hsf5dt.eastus-01.azurewebsites.net'
 ];
 
 const corsOptions = {
@@ -48,6 +31,22 @@ const corsOptions = {
   allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'Accept'],
   credentials: true
 };
+
+app.use(cors(corsOptions));
+app.use(bodyParser.json());
+
+// Cargar el archivo YAML
+const swaggerDocument = YAML.load("./swagger.yaml");
+// Montar la documentación Swagger en la ruta `/api-docs`
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+app.use('/api/auth', authRoutes);
+app.use('/api/reset', reset);
+app.get("/", (req, res) => {
+  res.send("Servidor funcionando correctamente 🚀");
+});
+
+
 
 app.get("/cache", async (req, res) => {
   const data = await redis.get("mensaje");
