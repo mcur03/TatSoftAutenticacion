@@ -3,31 +3,39 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-// Configuración para Azure Redis
-const redis = new Redis({
+const redisOptions = {
   host: process.env.REDIS_HOST,
   port: parseInt(process.env.REDIS_PORT || "6380"),
   password: process.env.REDIS_PASSWORD,
   tls: {
-    // Azure Redis requiere TLS
-    servername: process.env.REDIS_HOST
+    servername: process.env.REDIS_HOST,
+    rejectUnauthorized: false
+  },
+  retryStrategy: function(times: number) {
+    if (times > 3) {
+      console.error('Redis retry strategy giving up...');
+      return null;
+    }
+    const delay = Math.min(times * 1000, 3000);
+    console.log(`Redis retrying connection in ${delay}ms...`);
+    return delay;
   }
+};
+
+console.log('Redis configuration:', {
+  host: process.env.REDIS_HOST,
+  port: process.env.REDIS_PORT,
+  hasPassword: !!process.env.REDIS_PASSWORD
 });
 
-// Manejar eventos de conexión
-redis.on("connect", () => {
-  console.log("Conectado a Azure Redis Cache");
+const redis = new Redis(redisOptions);
+
+redis.on('connect', () => {
+  console.log('Connected to Redis');
 });
 
-redis.on("error", (error) => {
-  console.error("Error de conexión Redis:", error);
-});
-
-// Test de conexión
-redis.set("test", "Conexión exitosa a Azure Redis!", "EX", 60).then(() => {
-  console.log("Test de escritura en Redis exitoso");
-}).catch(err => {
-  console.error("Error en test de Redis:", err);
+redis.on('error', (err) => {
+  console.error('Redis connection error:', err);
 });
 
 export default redis;

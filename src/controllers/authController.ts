@@ -16,15 +16,15 @@ export const login = async (req: Request, res: Response) => {
     const response = await axios.get(`${USER_SERVICE_URL}/cedula/${cedula}`);
     const user = response.data;
     
-    console.log(user, 'CONTRASEÑA',user.contraseña, 'ROLE',user.rol, 'ID', user.id_usuario );
+    console.log(user, 'CONTRASENA',user['contraseña'], 'ROLE',user.rol, 'ID', user.id_usuario );
     // Verifica si el usuario fue encontrado
-    if (!user || !user.contraseña || !user.rol) {
+    if (!user || !user['contraseña'] || !user.rol) {
         
       return res.status(404).json({ error: 'Usuario no encontrado o datos incompletos' });
     }
 
     // Verifica la contraseña
-    const validPassword = await bcrypt.compare(password, user.contraseña);
+    const validPassword = await bcrypt.compare(password, user['contraseña']);
     if (!validPassword) {
       return res.status(401).json({ error: 'Contraseña incorrecta' });
     }
@@ -33,7 +33,7 @@ export const login = async (req: Request, res: Response) => {
   }
     // Genera el token
     const token = jwt.sign(
-      { contraseña: user.contraseña, cedula: user.cedula, role: user.rol, id_usuario: user.id_usuario }, 
+      { password: user['contraseña'], cedula: user.cedula, role: user.rol, id_usuario: user.id_usuario }, 
       process.env.JWT_SECRET ?? ' ',
       { expiresIn: '1h' }
     );
