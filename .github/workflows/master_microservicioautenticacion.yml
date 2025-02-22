@@ -31,8 +31,11 @@ jobs:
 
       - name: Zip artifact for deployment
         run: |
+          cd dist
+          cp ../package*.json .
           cp ../web.config .
-          zip release.zip ./* -r
+          npm install --production
+          zip -r ../release.zip ./*
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
