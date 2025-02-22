@@ -1,3 +1,4 @@
+// Forzar nuevo despliegue - 22/02/2024
 import express from 'express';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
@@ -14,7 +15,6 @@ const app = express();
 const PORT = process.env.PORT || 8080;
 
 const allowedOrigins = [
-  'http://localhost:3000',
   'http://localhost:8080',
   'https://microservicioautenticacion-bje8eahhh2hsf5dt.eastus-01.azurewebsites.net'
 ];
@@ -32,7 +32,7 @@ const corsOptions = {
   credentials: true
 };
 
-app.use(cors(corsOptions));
+app.use('*', cors(corsOptions));
 app.use(bodyParser.json());
 
 // Cargar el archivo YAML
